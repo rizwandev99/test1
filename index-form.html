@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit="handleFormSubmit(event)">
+        <label for:"username">User Name: </label>
+        <input type="text" id="username" name="u_name">
+        <br><br>
+        <label for:"userage">User Age: </label>
+        <input type="number" id="userage" name="u_age">
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        function handleFormSubmit(event){
+            event.preventDefault();
+            console.log(event);
+            console.log(event.target.u_name.value);
+            console.log(event.target.u_age.value);
+
+        }
+    </script>
+</body>
+</html>
