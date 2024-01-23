@@ -1,21 +1,31 @@
 // Add input element inside form, before button, to take fruit description
+const input = document.createElement("input");
+input.setAttribute("type", "text");
 const form = document.querySelector("form");
-const btnForm = document.querySelector("btn");
-const inputDesc = document.createElement("input");
-inputDesc.setAttribute("placeholder", "Write Description of fruit here...");
-inputDesc.id = "desc";
-form.insertBefore(inputDesc, btnForm);
+const button = document.querySelector("button");
+form.insertBefore(input, button);
 
 // Show the fruit description in italics on the next line
 const fruits = document.querySelector(".fruits");
-const inputFruit = document.querySelector("#fruit-to-add");
+input.style.fontStyle = "italic";
 
 form.addEventListener("submit", function (event) {
   event.preventDefault();
-  const newLI = document.createElement("li");
-  newLI.innerHTML = inputFruit.value + "<p>inputDesc.value</p>";
-  inputDesc.style.fontStyle = "italic";
-  fruits.appendChild(newLI);
+  const fruitToAdd = document.getElementById("fruit-to-add");
+
+  const newLi = document.createElement("li");
+  newLi.innerHTML =
+    fruitToAdd.value +
+    '<button class="delete-btn">x</button>' +
+    '<p class="desc">' +
+    input.value +
+    "</p>";
+  fruits.appendChild(newLi);
+
+  const desc = document.getElementsByClassName("desc");
+  for (let i = 0; i < desc.length; i++) {
+    desc[i].style.fontStyle = "italic";
+  }
 });
 
 // Create a filter that shows only those fruits whose either name or description or both matches the entered text
@@ -23,4 +33,23 @@ const filter = document.getElementById("filter");
 
 filter.addEventListener("keyup", function (event) {
   const textEntered = event.target.value.toLowerCase();
+  const fruitItems = document.getElementsByClassName("fruit");
+  const fruitDesc = document.getElementsByClassName("desc");
+  console.log(fruitItems[0]);
+  console.log(fruitDesc[0]);
+  for (let i = 0; i < fruitItems.length; i++) {
+    const currentFruitText = fruitItems[i].firstChild.textContent.toLowerCase();
+    console.log(fruitDesc[i], i); //?
+    const currentFruitDesc = fruitDesc[i].firstChild.textContent.toLowerCase();
+
+    if (
+      currentFruitText.indexOf(textEntered) === -1 &&
+      currentFruitDesc.indexOf(textEntered) === -1
+    ) {
+      fruitItems[i].style.display = "none";
+    } else {
+      fruitItems[i].style.display = "flex";
+    }
+  }
 });
+c;
