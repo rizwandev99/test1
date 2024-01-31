@@ -20,6 +20,8 @@ form.addEventListener("submit", function (event) {
     '<p class="desc">' +
     input.value +
     "</p>";
+
+  newLi.className = "fruit";
   fruits.appendChild(newLi);
 
   const desc = document.getElementsByClassName("desc");
@@ -35,21 +37,30 @@ filter.addEventListener("keyup", function (event) {
   const textEntered = event.target.value.toLowerCase();
   const fruitItems = document.getElementsByClassName("fruit");
   const fruitDesc = document.getElementsByClassName("desc");
-  console.log(fruitItems[0]);
-  console.log(fruitDesc[0]);
+
   for (let i = 0; i < fruitItems.length; i++) {
     const currentFruitText = fruitItems[i].firstChild.textContent.toLowerCase();
-    console.log(fruitDesc[i], i); //?
-    const currentFruitDesc = fruitDesc[i].firstChild.textContent.toLowerCase();
-
+    // const currentFruitDesc = fruitDesc[i].firstChild.textContent.toLowerCase();
     if (
-      currentFruitText.indexOf(textEntered) === -1 &&
-      currentFruitDesc.indexOf(textEntered) === -1
+      currentFruitText.indexOf(textEntered) === -1
+      // && currentFruitDesc.indexOf(textEntered) === -1
     ) {
       fruitItems[i].style.display = "none";
     } else {
       fruitItems[i].style.display = "flex";
     }
   }
+
+  for (let i = 4; i < fruitItems.length; i++) {
+    console.log(fruitDesc[0]);
+    const currentFruitDesc = fruitDesc[i].firstChild.textContent.toLowerCase();
+    console.log(currentFruitDesc);
+    if (currentFruitDesc.indexOf(textEntered) === -1) {
+      fruitItems[i].style.display = "none";
+      console.log("if---");
+    } else {
+      fruitItems[i].style.display = "flex";
+      console.log("else---");
+    }
+  }
 });
-c;
