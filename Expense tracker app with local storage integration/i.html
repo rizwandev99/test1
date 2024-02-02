@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+  </head>
+  <body>
+    <h1>Expense Tracker</h1>
+
+    <form id="expenseForm">
+      <label for="expense">Expense:</label>
+      <input type="number" id="expense" name="expense" required />
+
+      <label for="description">Description:</label>
+      <input type="text" id="description" name="description" required />
+
+      <label for="category">Category:</label>
+      <select name="category" id="category">
+        <option>Fuel</option>
+        <option>Food</option>
+        <option>Electricity</option>
+        <option>Movies</option>
+      </select>
+
+      <button type="submit">Add Expense</button>
+    </form>
+
+    <ul id="expenseList"></ul>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const expenseForm = document.getElementById("expenseForm");
+        const expenseList = document.getElementById("expenseList");
+
+        // Load saved expenses from local storage on page load
+        const savedExpenses =
+          JSON.parse(localStorage.getItem("expenses")) || [];
+
+        // Populate the list with saved expenses
+        savedExpenses.forEach((savedExpense) => {
+          const newList = createListItem(savedExpense);
+          expenseList.appendChild(newList);
+        });
+
+        // Handle form submission
+        expenseForm.addEventListener("submit", handleFormSubmit);
+
+        function handleFormSubmit(event) {
+          event.preventDefault();
+          const expenseInput = event.target.expense;
+          const descriptionInput = event.target.description;
+          const categoryInput = event.target.category;
+
+          const obj = {
+            expense: expenseInput.value,
+            description: descriptionInput.value,
+            category: categoryInput.value,
+          };
+
+          const string =
+            obj.expense + "-" + obj.description + "-" + obj.category;
+          const newList = createListItem(string);
+
+          // Save the expense to local storage
+          savedExpenses.push(string);
+          localStorage.setItem("expenses", JSON.stringify(savedExpenses));
+
+          expenseList.appendChild(newList);
+          event.target.reset();
+        }
+
+        function createListItem(expenseString) {
+          const newList = document.createElement("li");
+          const newListText = document.createTextNode(expenseString);
+          newList.appendChild(newListText);
+
+          // Create delete button
+          const delButton = document.createElement("button");
+          delButton.innerHTML = "Delete Expense";
+          delButton.addEventListener("click", function () {
+            // Remove from the list
+            newList.remove();
+
+            // Remove from saved expenses in local storage
+            const index = savedExpenses.indexOf(expenseString);
+            if (index !== -1) {
+              savedExpenses.splice(index, 1);
+              localStorage.setItem("expenses", JSON.stringify(savedExpenses));
+            }
+          });
+          newList.appendChild(delButton);
+
+          // Create edit button
+          const editButton = document.createElement("button");
+          editButton.innerHTML = "Edit Expense";
+          editButton.addEventListener("click", function () {
+            // Remove from the list
+            newList.remove();
+
+            // Populate the form with the expense details
+            const [expense, description, category] = expenseString.split("-");
+            expenseForm.expense.value = expense;
+            expenseForm.description.value = description;
+            expenseForm.category.value = category;
+
+            // Remove from saved expenses in local storage
+            const index = savedExpenses.indexOf(expenseString);
+            if (index !== -1) {
+              savedExpenses.splice(index, 1);
+              localStorage.setItem("expenses", JSON.stringify(savedExpenses));
+            }
+          });
+          newList.appendChild(editButton);
+
+          return newList;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -27,20 +27,19 @@ form.addEventListener("submit", (event) => {
   };
 
   localStorage.setItem(desc.value, JSON.stringify(obj));
+});
+// Delete functionality
+list.addEventListener("click", (event) => {
+  if (event.target.classList.contains("delete")) {
+    const listToDelete = event.target.parentElement;
+    list.removeChild(listToDelete);
 
-  // Delete functionality
-  list.addEventListener("click", (event) => {
-    if (event.target.classList.contains("delete")) {
-      const listToDelete = event.target.parentElement;
-      list.removeChild(listToDelete);
-
-      //removing from local storage:
-      let text = listToDelete.innerText;
-      text = text.replace("Delete", "").replace("Edit", "");
-      let newKey = text.split(" ");
-      let deleteKey = newKey[1];
-      console.log(deleteKey);
-      localStorage.removeItem(deleteKey);
-    }
-  });
+    //removing from local storage:
+    let text = listToDelete.innerText;
+    text = text.replace("Delete", "").replace("Edit", "");
+    let newKey = text.split(" ");
+    let deleteKey = newKey[1];
+    console.log(deleteKey);
+    localStorage.removeItem(deleteKey);
+  }
 });
