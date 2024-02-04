@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoteBook App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="search" style="margin-left: 30%">
+      <h1>NoteBook</h1>
+      <label for="search">Search Notes:</label>
+      <input type="text" id="search" name="search" />
+      <p>Total Notes: <span id="totalCount"></span></p>
+      <p>Showing:</p>
+    </div>
+    <form onsubmit="onSubmit(event)">
+      <label for="title">Note Title</label>
+      <input type="text" id="title" name="title" />
+      <br /><br />
+      <label for="desc">Note Description</label>
+      <br />
+      <textarea name="desc" id="desc" cols="10" rows="3"></textarea>
+      <br /><br />
+      <button type="submit">Submit</button>
+    </form>
+    <ul id="list"></ul>
+  </body>
+  <script>
+    function showOnScreen(obj) {
+      let list = document.getElementById("list");
+      let li = document.createElement("li");
+      li.innerHTML = `<h3>${obj.title}</h3> <p>${obj.desc}</p>`;
+      let id;
+
+      //addin on crudcrud
+      axios
+        .post(
+          "https://crudcrud.com/api/e1638b5e4a644f88855ac7f321de4fdd/aa/",
+          obj
+        )
+        .then((res) => {
+          console.log(res);
+          id = res.data._id;
+          console.log(id);
+        });
+
+      //Adding delete button:
+      let button = document.createElement("input");
+      button.type = "button";
+      button.value = "Button";
+
+      //delete functionality:
+      button.onclick = () => {
+        list.removeChild(li);
+        //removing on crudcrud
+        axios
+          .delete(
+            `https://crudcrud.com/api/e1638b5e4a644f88855ac7f321de4fdd/aa/${id}`
+          )
+          .then((res) => {
+            console.log("REMOVED...");
+          });
+        updateTotalCount(-1);
+      };
+
+      li.appendChild(button);
+      list.appendChild(li);
+      updateTotalCount(1);
+    }
+
+    function onSubmit(event) {
+      event.preventDefault();
+      let title = event.target.title.value;
+      let desc = event.target.desc.value;
+      let obj = {
+        title,
+        desc,
+      };
+      showOnScreen(obj);
+    }
+    function updateTotalCount(count) {
+      let totalCount = document.getElementById("totalCount");
+      let currentTotal = parseInt(totalCount.innerText) || 0;
+      totalCount.innerText = currentTotal + count;
+    }
+  </script>
+</html>
