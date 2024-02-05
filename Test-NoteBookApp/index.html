@@ -10,9 +10,9 @@
     <div class="search" style="margin-left: 30%">
       <h1>NoteBook</h1>
       <label for="search">Search Notes:</label>
-      <input type="text" id="search" name="search" />
+      <input type="text" id="search" name="search" onkeyup="searchNotes()" />
       <p>Total Notes: <span id="totalCount"></span></p>
-      <p>Showing:</p>
+      <p>Showing:<span id="showingCount"></span></p>
     </div>
     <form onsubmit="onSubmit(event)">
       <label for="title">Note Title</label>
@@ -27,23 +27,52 @@
     <ul id="list"></ul>
   </body>
   <script>
-    function showOnScreen(obj) {
-      let list = document.getElementById("list");
-      let li = document.createElement("li");
-      li.innerHTML = `<h3>${obj.title}</h3> <p>${obj.desc}</p>`;
-      let id;
+    function onSubmit(event) {
+      event.preventDefault();
+      let title = event.target.title.value;
+      let desc = event.target.desc.value;
+      let obj = {
+        title,
+        desc,
+      };
+      postOnScreen(obj);
+    }
 
+    window.addEventListener("DOMContentLoaded", () => {
+      axios
+        .get("https://crudcrud.com/api/7e1824cf08664e789801ebaa7526e516/aa")
+        .then((res) => {
+          console.log("GET SUCCESS");
+          for (let i = 0; i < res.data.length; i++) {
+            id = res.data[i]._id;
+            showOnScreen(res.data[i], id);
+            console.log("hi", id);
+            console.log("Get res", res.data[i]);
+          }
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+    });
+    function postOnScreen(obj) {
       //addin on crudcrud
       axios
         .post(
-          "https://crudcrud.com/api/e1638b5e4a644f88855ac7f321de4fdd/aa/",
+          "https://crudcrud.com/api/7e1824cf08664e789801ebaa7526e516/aa",
           obj
         )
         .then((res) => {
-          console.log(res);
-          id = res.data._id;
-          console.log(id);
+          let id = res.data._id;
+          showOnScreen(obj, id);
+          console.log("id", id, "title", res.data.title);
         });
+    }
+
+    function showOnScreen(obj, key) {
+      let list = document.getElementById("list");
+      let li = document.createElement("li");
+      li.innerHTML = `<h3>${obj.title}</h3> <p>${obj.desc}</p>`;
+      let id = key;
 
       //Adding delete button:
       let button = document.createElement("input");
@@ -56,7 +85,7 @@
         //removing on crudcrud
         axios
           .delete(
-            `https://crudcrud.com/api/e1638b5e4a644f88855ac7f321de4fdd/aa/${id}`
+            `https://crudcrud.com/api/7e1824cf08664e789801ebaa7526e516/aa/${id}`
           )
           .then((res) => {
             console.log("REMOVED...");
@@ -68,21 +97,35 @@
       list.appendChild(li);
       updateTotalCount(1);
     }
-
-    function onSubmit(event) {
-      event.preventDefault();
-      let title = event.target.title.value;
-      let desc = event.target.desc.value;
-      let obj = {
-        title,
-        desc,
-      };
-      showOnScreen(obj);
-    }
     function updateTotalCount(count) {
       let totalCount = document.getElementById("totalCount");
       let currentTotal = parseInt(totalCount.innerText) || 0;
       totalCount.innerText = currentTotal + count;
+    }
+
+    function searchNotes() {
+      let input = document.getElementById("search");
+      let filter = input.value.toUpperCase();
+      let ul = document.getElementById("list");
+      let li = ul.getElementsByTagName("li");
+      let showingCount = 0;
+
+      if (filter === "") {
+        document.getElementById("showingCount").innerText = showingCount;
+        return;
+      }
+
+      for (let i = 0; i < li.length; i++) {
+        let title = li[i].getElementsByTagName("h3")[0];
+        let txtValue = title.textContent || title.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "";
+          showingCount++;
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+      document.getElementById("showingCount").innerText = showingCount;
     }
   </script>
 </html>
